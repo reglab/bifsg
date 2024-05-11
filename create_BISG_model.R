@@ -47,8 +47,8 @@ predict_race <- function(firstname, surname, cbg) {
   } else if (!anyNA(prob_race_given_surname) & 
              !anyNA(prob_first_name_given_race)) {
     
-    probs <- (prob_race_given_surname * prob_first_name_given_race * race_probs) /
-      sum(prob_race_given_surname * prob_first_name_given_race * race_probs)
+    probs <- (prob_race_given_surname * prob_first_name_given_race) /
+      sum(prob_race_given_surname * prob_first_name_given_race)
     case = "FIRST,LAST"
     
     # CASE 3: MISSING SURNAME (USE CBG AS PRIOR)
