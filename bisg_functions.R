@@ -106,10 +106,21 @@ predict_race <- function(df, firstname=F, geo = "county"){
       select(all_of(race_var))
     post <- priors * update
     
-    df1_posteriors <- cbind(
+    temp <- cbind(
       df1 %>% select(id),
       post
     ) 
+    
+    temp1 <- temp %>% 
+      filter(across(race_var, ~is.na(.))) %>% 
+      select(id) %>% 
+      left_join(df1) %>%
+      select(id,all_of(race_var))
+    
+    temp2 <- temp %>% 
+      filter(across(race_var, ~!is.na(.)))
+    
+    df1_posteriors <- rbind(temp1,temp2)
   }
   
   # step 2
@@ -149,8 +160,21 @@ predict_race <- function(df, firstname=F, geo = "county"){
     post_firstname <- total_prior * firstname_update
     post_firstname_normalized <- post_firstname / rowSums(post_firstname)
     
-    post_combined <- cbind(post_combined %>% select(id),
-                           post_firstname_normalized)
+    temp <- cbind(
+      post_combined %>% select(id),
+      post_firstname_normalized
+    )
+    
+    temp1 <- temp %>% 
+      filter(across(race_var, ~is.na(.))) %>% 
+      select(id) %>% 
+      left_join(post_combined)
+    
+    temp2 <- temp %>% 
+      filter(across(race_var, ~!is.na(.)))
+    
+    post_combined <- rbind(temp1,temp2)
+    
   }
   
   df_posteriors <- post_combined %>%
