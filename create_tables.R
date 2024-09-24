@@ -35,13 +35,13 @@ if (!file.exists(paste0(DIR_PATH,"p_race_given_surname.rds")) | !file.exists(pas
     filter(!is.na(NAME)) %>% 
     transmute(
       name = NAME,
-      COUNT = COUNT,
       aian = PCTAIAN * COUNT / 100,
       api = PCTAPI * COUNT / 100,
       black = PCTBLACK * COUNT / 100,
       hispanic = PCTHISPANIC * COUNT / 100,
       white = PCTWHITE * COUNT / 100,
-      other = COUNT - (aian + api + black + hispanic + white)
+      other = pmax(0,COUNT - (aian + api + black + hispanic + white)),
+      COUNT = aian + api + black + hispanic + white + other
     )
   
   p_race_given_surname <- race_surname_counts %>% 
@@ -86,7 +86,8 @@ if(!file.exists(paste0(DIR_PATH,"p_race_given_firstname.rds")) | !file.exists(pa
     black = pctblack * COUNT / 100,
     hispanic = pcthispanic * COUNT / 100,
     white = pctwhite * COUNT / 100,
-    other = COUNT - (aian + api + black + hispanic + white)
+    other = pmax(0,COUNT - (aian + api + black + hispanic + white)),
+    COUNT = aian + api + black + hispanic + white + other
   )
   
   p_race_given_firstname <- first_name_counts %>% 
