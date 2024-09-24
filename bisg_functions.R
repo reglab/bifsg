@@ -3,12 +3,12 @@ library(dplyr)
 USE_CACHED <- T
 DIR_PATH <- "" # set your path
 
-geo_race_table_lst <- readRDS(paste0(DIR_PATH,"geo_race_table.rds"))
-
-p_race_given_surname <- readRDS(paste0(DIR_PATH,"p_race_given_surname.rds"))
-p_surname_given_race <- readRDS(paste0(DIR_PATH,"p_surname_given_race.rds"))
-p_race_given_firstname <- readRDS(paste0(DIR_PATH,"p_race_given_firstname.rds"))
-p_firstname_given_race <- readRDS(paste0(DIR_PATH,"p_firstname_given_race.rds"))
+# load these before the function is used.
+# geo_race_table_lst <- readRDS(paste0(DIR_PATH,"geo_race_table.rds"))
+# p_race_given_surname <- readRDS(paste0(DIR_PATH,"p_race_given_surname.rds"))
+# p_surname_given_race <- readRDS(paste0(DIR_PATH,"p_surname_given_race.rds"))
+# p_race_given_firstname <- readRDS(paste0(DIR_PATH,"p_race_given_firstname.rds"))
+# p_firstname_given_race <- readRDS(paste0(DIR_PATH,"p_firstname_given_race.rds"))
 
 #df is your dataframe. It just needs the fields "id" (any kind of unique identifier), "surname", "firstname" (if you're running BIFSG), and at least one of the following geo fields: "cbg", "tract", "zip", "county" (default), or "state" (specify which geo level you want to use as a parameter in the function call). The function will add columns with posterior probabilities to df.
 predict_race <- function(df, firstname=F, geo = "county"){
