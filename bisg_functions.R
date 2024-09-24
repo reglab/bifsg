@@ -1,6 +1,3 @@
-library(tidyverse)
-library(doParallel)
-
 USE_CACHED <- T
 DIR_PATH <- "" # set your path
 
@@ -164,15 +161,15 @@ predict_race <- function(df, firstname=F, geo = "county"){
 }
 
 # Example
-data <- data.frame(
-  id = c(1:3),
-  firstname = c("JOHN","JOSE","JIANG"),
-  surname = c("WALKER","LOPEZ","LI"),
-  cbg = c("010010201001","010010201002",NA)
-)
-
-result_bisg <- data %>% 
-  predict_race(geo = "cbg")
-
-result_bifsg <- data %>% 
-  predict_race(firstname = T, geo = "cbg")
+# data <- data.frame(
+#   id = c(1:3),
+#   firstname = c("JOHN","JOSE","JIANG"),
+#   surname = c("WALKER","LOPEZ","LI"),
+#   cbg = c("010010201001","010010201002",NA)
+# )
+# 
+# result_bisg <- data %>% 
+#   predict_race(geo = "cbg")
+# 
+# result_bifsg <- data %>% 
+#   predict_race(firstname = T, geo = "cbg")
