@@ -1,4 +1,5 @@
 library(dplyr)
+library(tidyr)
 
 USE_CACHED <- T
 DIR_PATH <- "" # set your path
@@ -172,7 +173,7 @@ predict_race <- function(df, firstname=F, geo = "county"){
     mutate(sum_to_adjust = rowSums(select(., -c(id)))) %>%
     mutate(across(-c(id,-sum_to_adjust), ~./sum_to_adjust)) %>%
     select(-sum_to_adjust) %>% 
-    mutate(across(-patientuid,~replace_na(.,0))) %>% 
+    mutate(across(-id,~replace_na(.,0))) %>% 
     left_join(df,., by = "id")
   
   return(df_posteriors)
