@@ -103,24 +103,17 @@ predict_race <- function(df, firstname=F, geo = "county"){
     update <- df1 %>% 
       select(GEOID) %>% 
       left_join(p_geo_given_race, by="GEOID") %>%
+      mutate(across(
+        everything(),
+        ~replace_na(.,1)
+      )) %>% 
       select(all_of(race_var))
     post <- priors * update
     
-    temp <- cbind(
+    df1_posteriors <- cbind(
       df1 %>% select(id),
       post
     ) 
-    
-    temp1 <- temp %>% 
-      filter(across(race_var, ~is.na(.))) %>% 
-      select(id) %>% 
-      left_join(df1) %>%
-      select(id,all_of(race_var))
-    
-    temp2 <- temp %>% 
-      filter(across(race_var, ~!is.na(.)))
-    
-    df1_posteriors <- rbind(temp1,temp2)
   }
   
   # step 2
@@ -131,7 +124,7 @@ predict_race <- function(df, firstname=F, geo = "county"){
   if (nrow(df2) > 0){
     priors <- df2 %>%
       select(GEOID) %>% 
-      inner_join(p_race_given_geo, by="GEOID") %>%
+      left_join(p_race_given_geo, by="GEOID") %>%
       select(all_of(race_var))
     
     df2_posteriors <- cbind(
@@ -148,7 +141,7 @@ predict_race <- function(df, firstname=F, geo = "county"){
       left_join(p_firstname_given_race,
                 by=c("firstname"="name")) %>%
       distinct() %>% 
-      inner_join(post_combined %>% select(id), ., 
+      left_join(post_combined %>% select(id), ., 
                  by="id") %>% 
       select(all_of(race_var)) %>%
       mutate(
@@ -166,14 +159,12 @@ predict_race <- function(df, firstname=F, geo = "county"){
     )
     
     temp1 <- temp %>% 
-      filter(across(race_var, ~is.na(.))) %>% 
-      select(id) %>% 
-      left_join(post_combined)
+      filter(across(all_of(race_var), ~!is.na(.)))
     
-    temp2 <- temp %>% 
-      filter(across(race_var, ~!is.na(.)))
-    
-    post_combined <- rbind(temp1,temp2)
+    post_combined <- rbind(
+      post_combined %>% filter(!id %in% temp1$id),
+      temp1
+    )
     
   }
   
@@ -181,6 +172,7 @@ predict_race <- function(df, firstname=F, geo = "county"){
     mutate(sum_to_adjust = rowSums(select(., -c(id)))) %>%
     mutate(across(-c(id,-sum_to_adjust), ~./sum_to_adjust)) %>%
     select(-sum_to_adjust) %>% 
+    mutate(across(-patientuid,~replace_na(.,0))) %>% 
     left_join(df,., by = "id")
   
   return(df_posteriors)
